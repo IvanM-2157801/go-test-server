@@ -8,7 +8,8 @@ import (
 	"context"
 	"fmt"
 	"test-server/graph/model"
-	"github.com/go-resty/resty/v2"
+
+	resty "github.com/go-resty/resty/v2"
 )
 
 // Character is the resolver for the character field.
@@ -23,6 +24,32 @@ func (r *queryResolver) Character(ctx context.Context, id string) (*model.Charac
 	}
 	character := resp.Result().(*model.Character)
 	return character, nil
+}
+
+// Planet is the resolver for the planet field.
+func (r *queryResolver) Planet(ctx context.Context, id string) (*model.Planet, error) {
+	apiClient := resty.New()
+
+	resp, err := apiClient.R().
+		SetResult(&model.Planet{}).
+		Get(fmt.Sprintf("https://swapi.dev/api/planets/%s/", id))
+	if err != nil {
+		return nil, err
+	}
+
+	planet := resp.Result().(*model.Planet)
+	var residents []*string
+
+	for _, url := range planet.Residents {
+		resp, _ := apiClient.R().
+			SetResult(&model.Character{}).
+			Get(*url)
+		resident := resp.Result().(*model.Character)
+		residents = append(residents, resident.Name)
+	}
+
+	planet.Residents = residents
+	return planet, nil
 }
 
 // Query returns QueryResolver implementation.
