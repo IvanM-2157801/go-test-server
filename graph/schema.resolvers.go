@@ -6,8 +6,7 @@ package graph
 
 import (
 	"context"
-	"encoding/json"
-	"net/http"
+	"strings"
 	"test-server/graph/model"
 	"test-server/graph/services"
 )
@@ -17,17 +16,10 @@ func (r *planetResolver) Residents(ctx context.Context, obj *model.Planet) ([]*m
 	var residents []*model.Character
 
 	for _, residentURL := range obj.ResidentURLs {
-		resp, err := http.Get(*residentURL)
-		if err != nil {
-			return nil, err
-		}
-		defer resp.Body.Close()
-
-		var character model.Character
-		if err := json.NewDecoder(resp.Body).Decode(&character); err != nil {
-			return nil, err
-		}
-		residents = append(residents, &character)
+		parts := strings.Split(*residentURL, "/")
+		id := parts[len(parts)-2]
+		character, _ := services.FetchCharacterById(id)
+		residents = append(residents, character)
 	}
 	return residents, nil
 }
