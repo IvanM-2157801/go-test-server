@@ -13,6 +13,7 @@ type Character {
     mass: String
     gender: String
     homeworld: String
+    id: String
 }
 
 type Planet {
@@ -22,9 +23,10 @@ type Planet {
     name: String,
     orbital_period: String,
     population: String,
-    residents: [String],
+    residents: [Character],
     rotation_period: String,
     surface_water: String,
     terrain: String,
     url: String
+    id: String
 }

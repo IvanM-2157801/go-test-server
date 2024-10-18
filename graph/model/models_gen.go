@@ -8,20 +8,7 @@ type Character struct {
 	Mass      *string `json:"mass,omitempty"`
 	Gender    *string `json:"gender,omitempty"`
 	Homeworld *string `json:"homeworld,omitempty"`
-}
-
-type Planet struct {
-	Climate        *string   `json:"climate,omitempty"`
-	Diameter       *string   `json:"diameter,omitempty"`
-	Gravity        *string   `json:"gravity,omitempty"`
-	Name           *string   `json:"name,omitempty"`
-	OrbitalPeriod  *string   `json:"orbital_period,omitempty"`
-	Population     *string   `json:"population,omitempty"`
-	Residents      []*string `json:"residents,omitempty"`
-	RotationPeriod *string   `json:"rotation_period,omitempty"`
-	SurfaceWater   *string   `json:"surface_water,omitempty"`
-	Terrain        *string   `json:"terrain,omitempty"`
-	URL            *string   `json:"url,omitempty"`
+	ID        *string `json:"id,omitempty"`
 }
 
 type Query struct {

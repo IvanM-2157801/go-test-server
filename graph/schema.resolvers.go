@@ -6,53 +6,55 @@ package graph
 
 import (
 	"context"
-	"fmt"
+	"encoding/json"
+	"net/http"
 	"test-server/graph/model"
-
-	resty "github.com/go-resty/resty/v2"
+	"test-server/graph/services"
 )
+
+// Residents is the resolver for the residents field.
+func (r *planetResolver) Residents(ctx context.Context, obj *model.Planet) ([]*model.Character, error) {
+	var residents []*model.Character
+
+	for _, residentURL := range obj.ResidentURLs {
+		resp, err := http.Get(*residentURL)
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close()
+
+		var character model.Character
+		if err := json.NewDecoder(resp.Body).Decode(&character); err != nil {
+			return nil, err
+		}
+		residents = append(residents, &character)
+	}
+	return residents, nil
+}
 
 // Character is the resolver for the character field.
 func (r *queryResolver) Character(ctx context.Context, id string) (*model.Character, error) {
-	apiClient := resty.New()
-
-	resp, err := apiClient.R().
-		SetResult(&model.Character{}).
-		Get(fmt.Sprintf("https://swapi.dev/api/people/%s/", id))
+	var character, err = services.FetchCharacterById(id)
 	if err != nil {
 		return nil, err
 	}
-	character := resp.Result().(*model.Character)
 	return character, nil
 }
 
 // Planet is the resolver for the planet field.
 func (r *queryResolver) Planet(ctx context.Context, id string) (*model.Planet, error) {
-	apiClient := resty.New()
-
-	resp, err := apiClient.R().
-		SetResult(&model.Planet{}).
-		Get(fmt.Sprintf("https://swapi.dev/api/planets/%s/", id))
+	var planet, err = services.FetchPlanetById(id)
 	if err != nil {
 		return nil, err
 	}
-
-	planet := resp.Result().(*model.Planet)
-	var residents []*string
-
-	for _, url := range planet.Residents {
-		resp, _ := apiClient.R().
-			SetResult(&model.Character{}).
-			Get(*url)
-		resident := resp.Result().(*model.Character)
-		residents = append(residents, resident.Name)
-	}
-
-	planet.Residents = residents
 	return planet, nil
 }
+
+// Planet returns PlanetResolver implementation.
+func (r *Resolver) Planet() PlanetResolver { return &planetResolver{r} }
 
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+type planetResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
