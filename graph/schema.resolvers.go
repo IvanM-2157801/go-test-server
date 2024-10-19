@@ -6,10 +6,36 @@ package graph
 
 import (
 	"context"
+	"fmt"
 	"strings"
+	"test-server/dbmodel"
 	"test-server/graph/model"
 	"test-server/graph/services"
 )
+
+// CreateVehicle is the resolver for the createVehicle field.
+func (r *mutationResolver) CreateVehicle(ctx context.Context, input model.NewVehicle) (*model.Vehicle, error) {
+	Addvehicle := dbmodel.Vehicle{
+		CargoCapacity:        *input.CargoCapacity,
+		Consumables:          *input.Consumables,
+		CostInCredits:        *input.CostInCredits,
+		Crew:                 *input.Crew,
+		Length:               *input.Length,
+		Manufacturer:         *input.Manufacturer,
+		MaxAtmospheringSpeed: *input.MaxAtmospheringSpeed,
+		Model:                *input.Model,
+		Name:                 *input.Name,
+		Passengers:           *input.Passengers,
+		VehicleClass:         *input.VehicleClass,
+	}
+
+	if err := r.Database.Create(&Addvehicle).Error; err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	return services.DBVehicleToGraphQLVehicle(&Addvehicle), nil
+}
 
 // Residents is the resolver for the residents field.
 func (r *planetResolver) Residents(ctx context.Context, obj *model.Planet) ([]*model.Character, error) {
@@ -42,11 +68,27 @@ func (r *queryResolver) Planet(ctx context.Context, id string) (*model.Planet, e
 	return planet, nil
 }
 
+// Vehicle is the resolver for the vehicle field.
+func (r *queryResolver) Vehicle(ctx context.Context, id string) (*model.Vehicle, error) {
+	vehicle := model.Vehicle{}
+
+	if err := r.Database.Find(&vehicle, id).Error; err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	return &vehicle, nil
+}
+
+// Mutation returns MutationResolver implementation.
+func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
+
 // Planet returns PlanetResolver implementation.
 func (r *Resolver) Planet() PlanetResolver { return &planetResolver{r} }
 
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+type mutationResolver struct{ *Resolver }
 type planetResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }

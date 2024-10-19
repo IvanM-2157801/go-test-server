@@ -5,6 +5,11 @@
 type Query {
   character(id: ID!): Character
   planet(id: ID!): Planet
+  vehicle(id: ID!): Vehicle
+}
+
+type Mutation {
+  createVehicle(input: NewVehicle!): Vehicle!
 }
 
 type Character {
@@ -29,4 +34,35 @@ type Planet {
     terrain: String,
     url: String
     id: String
+}
+
+type Vehicle {
+    id: ID!
+    cargoCapacity: String
+    consumables: String
+    costInCredits: String
+    crew: String
+    length: String
+    manufacturer: String
+    maxAtmospheringSpeed: String
+    model: String
+    name: String
+    passengers: String
+    vehicleClass: String
+  #  pilots: [Pilot]       # Many-to-many relationship with Pilot
+  #  films: [Film]         # Many-to-many relationship with Film
+}
+
+input NewVehicle {
+	cargoCapacity: String
+	consumables: String
+	costInCredits: String
+	crew: String
+	length: String
+	manufacturer: String
+	maxAtmospheringSpeed: String
+	model: String
+	name: String
+	passengers: String
+	vehicleClass: String
 }

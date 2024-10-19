@@ -11,5 +11,37 @@ type Character struct {
 	ID        *string `json:"id,omitempty"`
 }
 
+type Mutation struct {
+}
+
+type NewVehicle struct {
+	CargoCapacity        *string `json:"cargoCapacity,omitempty"`
+	Consumables          *string `json:"consumables,omitempty"`
+	CostInCredits        *string `json:"costInCredits,omitempty"`
+	Crew                 *string `json:"crew,omitempty"`
+	Length               *string `json:"length,omitempty"`
+	Manufacturer         *string `json:"manufacturer,omitempty"`
+	MaxAtmospheringSpeed *string `json:"maxAtmospheringSpeed,omitempty"`
+	Model                *string `json:"model,omitempty"`
+	Name                 *string `json:"name,omitempty"`
+	Passengers           *string `json:"passengers,omitempty"`
+	VehicleClass         *string `json:"vehicleClass,omitempty"`
+}
+
 type Query struct {
+}
+
+type Vehicle struct {
+	ID                   string  `json:"id"`
+	CargoCapacity        *string `json:"cargoCapacity,omitempty"`
+	Consumables          *string `json:"consumables,omitempty"`
+	CostInCredits        *string `json:"costInCredits,omitempty"`
+	Crew                 *string `json:"crew,omitempty"`
+	Length               *string `json:"length,omitempty"`
+	Manufacturer         *string `json:"manufacturer,omitempty"`
+	MaxAtmospheringSpeed *string `json:"maxAtmospheringSpeed,omitempty"`
+	Model                *string `json:"model,omitempty"`
+	Name                 *string `json:"name,omitempty"`
+	Passengers           *string `json:"passengers,omitempty"`
+	VehicleClass         *string `json:"vehicleClass,omitempty"`
 }

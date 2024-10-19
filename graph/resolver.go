@@ -6,8 +6,8 @@ package graph
 //
 // It serves as dependency injection for your app, add any dependencies you require here.
 
-import (
-)
+import "github.com/jinzhu/gorm"
 
-type Resolver struct{
+type Resolver struct {
+	Database *gorm.DB
 }
